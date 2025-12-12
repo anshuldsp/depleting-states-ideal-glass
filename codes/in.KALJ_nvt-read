@@ -1,0 +1,35 @@
+#log data_${sname}
+log none 
+units		lj
+dimension	2
+atom_style	atomic
+
+pair_style	lj/cutpsm 1.25  # Define interaction potential.
+read_restart  ${fname}  #initconf_T05eq.data # read data file (incl.mass info)
+
+     pair_coeff        1        1        1      0.7300000000000000	0.9125000000000000
+     pair_coeff        2        2        1      0.8288888888888890	1.0361111111111112
+     pair_coeff        3        3        1      0.9277777777777780	1.1597222222222225
+     pair_coeff        4        4        1      1.0266666666666671	1.2833333333333339
+     pair_coeff        5        5        1      1.1255555555555561	1.4069444444444450
+     pair_coeff        6        6        1      1.2244444444444440	1.5305555555555550
+     pair_coeff        7        7        1      1.3233333333333330	1.6541666666666663
+     pair_coeff        8        8        1      1.4222222222222221	1.7777777777777777
+     pair_coeff        9        9        1      1.5211111111111111	1.9013888888888888
+     pair_coeff       10       10        1      1.6200000000000001	2.0250000000000004
+
+
+mass           2 1.0
+mass           3 1.0
+mass           4 1.0
+mass           5 1.0
+mass           6 1.0
+mass           7 1.0
+mass           8 1.0
+mass           9 1.0
+mass          10 1.0
+
+write_data data.txt
+
+run 0
+

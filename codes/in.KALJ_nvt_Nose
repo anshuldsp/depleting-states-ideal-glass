@@ -1,0 +1,59 @@
+#KALJ NVT Nose' Hoover chain
+#log data_${sname}
+log none 
+units		lj
+dimension	2
+atom_style	atomic
+
+pair_style      lj/cutpsm   1.25    # Define interaction potential.
+read_data       ${fname}            # initconf_T05eq.data # read data file (incl.mass info)
+
+     pair_coeff        1        1        1      0.7300000000000000	0.9125000000000000
+     pair_coeff        2        2        1      0.8288888888888890	1.0361111111111112
+     pair_coeff        3        3        1      0.9277777777777780	1.1597222222222225
+     pair_coeff        4        4        1      1.0266666666666671	1.2833333333333339
+     pair_coeff        5        5        1      1.1255555555555561	1.4069444444444450
+     pair_coeff        6        6        1      1.2244444444444440	1.5305555555555550
+     pair_coeff        7        7        1      1.3233333333333330	1.6541666666666663
+     pair_coeff        8        8        1      1.4222222222222221	1.7777777777777777
+     pair_coeff        9        9        1      1.5211111111111111	1.9013888888888888
+     pair_coeff       10       10        1      1.6200000000000001	2.0250000000000004
+ 
+ 
+mass           1 1.0
+mass           2 1.0
+mass           3 1.0
+mass           4 1.0
+mass           5 1.0
+mass           6 1.0
+mass           7 1.0
+mass           8 1.0
+mass           9 1.0
+mass          10 1.0
+  
+fix     1   all enforce2d
+change_box  all triclinic
+
+neighbor        0.3 bin
+neigh_modify    every 1 delay 0 check yes # Update neighbor
+
+timestep    ${tstep} #0.005   
+
+# prints only if also some MD step run command follows
+compute     msd all msd com yes
+variable	vstep	equal	step*dt
+variable	vpe		equal	pe
+variable	vpress	equal	press 
+variable	vtemp	equal	temp
+variable    vke		equal	ke
+variable    vmsd	equal	c_msd[4]
+thermo_style    custom step pe press temp ke c_msd[4]
+#fix 1 all nvt temp 10.00 10.00 $(100.0*dt)
+variable        s equal logfreq(1,1,2)
+restart         v_s logscale-${fname}-*.restart
+restart          500000    linearscale0-${fname}.restart linearscale1-${fname}.restart
+fix 		    data  all print v_s " ${vstep}  ${vpe}  ${vpress}  ${vtemp}  ${vke}   ${vmsd}"     append thermo_data-logscale-${fname}.txt
+fix 		    data1 all print 500000 " ${vstep}  ${vpe}  ${vpress}  ${vtemp}  ${vke}   ${vmsd}"  append thermo_data-linscale-${fname}.txt 
+# set numerical integrator
+fix nose all nvt temp ${tempval} ${tempval} $(100.0*dt)
+run ${runleng} 
